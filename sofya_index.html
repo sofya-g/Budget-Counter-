@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <meta charset="utf-8">
+    <title>Budget Calculator</title>
+    <style>
+    .red {
+border: 1px solid red;
+    }
+    
+    .form-inline { 
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+  }
+  .form-inline label {
+    margin: 5px 10px 5px 0;
+  }
+
+  button {
+      margin: 10px;
+  }
+    </style>
+</head>
+<body>
+<div id='vue'>
+<!--setting main budget-->
+    <h1 v-if="calculate>0">Available money: {{ calculate }} </h1>
+    <h1 v-else>You ran out of money!</h1>
+    <hr>
+    <br>
+  
+<!--creating  form-->
+    <form class="form-inline">
+            <label for="name">Name</label>
+            <input v-model="newbudgetText" type="text" id="name">
+            <label for="spent">Budget</label>
+            <input v-model="newbudgetAmount" type="number" id="spent"><br>
+            
+  </form>
+    <button @click="addnewbudget" :disabled="newbudgetAmount.length<1">Submit</button>
+ 
+
+    <p v-for="(addedbudget, index) in addedbudgets" :key="addedbudget.id">
+        Name: <strong>{{ addedbudget.name }}</strong> 
+        Amount: <strong>{{ addedbudget.amount }} €</strong>
+        <button @click="deleteItem(index)">REMOVE</button>
+        <hr>
+    </p>
+
+</body>
+<script>
+app = new Vue({
+el: "#vue",
+data: {
+    addedbudgets: [],
+    newbudgetText:'',
+    newbudgetAmount: '',
+    budget: 250
+},
+methods: { 
+    addnewbudget: function () {
+    this.addedbudgets.push({name: this.newbudgetText, amount: this.newbudgetAmount});
+    },
+    deleteItem(index) {
+    this.addedbudgets.splice(index, 1);
+ },  
+},
+computed: {
+    calculate() {
+        return this.budget - this.addedbudgets.map(addedbudget => addedbudget.amount).reduce((total,amount) => parseInt(total)+parseInt(amount), 0);
+    }
+},
+})
+</script>
+</html>
